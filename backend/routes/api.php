@@ -11,7 +11,7 @@ Route::post('logout', [UserAuthController::class, 'logout']);
 Route::get('/users', [UserAuthController::class, 'getUsers']);
 
 Route::post('/create-blog', [BlogController::class, 'create']);
-Route::put('/update-blog/{id}', [BlogController::class, 'update']);
+Route::post('/update-blog/{id}', [BlogController::class, 'update']);
 Route::get('/blog-posts', [BlogController::class, 'index']);
 Route::get('/blog-posts/{id}', [BlogController::class, 'show']);
 

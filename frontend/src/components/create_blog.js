@@ -18,6 +18,7 @@ const NewPost = () => {
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
     const [images, setImages] = useState([]);
+    const [imagesPreview, setImagesPreview] = useState([]);
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -41,6 +42,18 @@ const NewPost = () => {
         } else {
             setImages(validFiles);
             setError(null);
+
+            const imagePreviews = [];
+            validFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    imagePreviews.push(reader.result);
+                    if (imagePreviews.length === validFiles.length) {
+                        setImagesPreview(imagePreviews);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
         }
     };
 
@@ -48,6 +61,26 @@ const NewPost = () => {
         e.preventDefault();
         setError(null);
         setSuccessMessage('');
+
+        if (formData.title.trim() === '') {
+            setError('Please enter a title.');
+            return;
+        }
+
+        if (formData.content.trim() === '') {
+            setError('Please enter content for your blog.');
+            return;
+        }
+
+        if (formData.publication_date.trim() === '') {
+            setError('Please select a publication date.');
+            return;
+        }
+
+        if (formData.tags.length === 0) {
+            setError('Please enter at least one tag.');
+            return;
+        }
 
         if (images.length === 0) {
             setError('Please upload at least one image.');
@@ -78,9 +111,14 @@ const NewPost = () => {
                 tags: [],
             });
             setImages([]);
+            setImagesPreview([]);
             navigate("/");
         } catch (error) {
-            setError(error.response.data.message);
+            if (error.response) {
+                setError(error.response.data.message);
+            } else {
+                setError('An unexpected error occurred.');
+            }
         }
     };
 
@@ -117,12 +155,15 @@ const NewPost = () => {
                 <Form.Group controlId="formBasicImages">
                     <Form.Label>Images</Form.Label>
                     <Form.Control type="file" name="images" onChange={handleFileChange} multiple />
+                    {imagesPreview.map((preview, index) => (
+                        <img key={index} src={preview} alt={`Image ${index}`} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
+                    ))}
                 </Form.Group>
-                <br></br>
+                <br />
                 <Button variant="dark" type="submit">
                     Create Blog
                 </Button>
-                <br></br><br></br><br></br><br></br>
+                <br /><br /><br /><br />
                 {error && <div className="error">{error}</div>}
                 {successMessage && <div className="success">{successMessage}</div>}
             </Form>

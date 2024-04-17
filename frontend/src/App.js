@@ -7,6 +7,7 @@ import EditPost from './components/edit_blog';
 import Navbar from './components/navbar';
 import Register from './components/register';
 import Login from './components/login';
+import BlogDetail from './components/blog-detail';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create" element={<NewPost />} />
+        <Route path="/blog/:id" element={<BlogDetail />} />
         <Route path="/edit/:id" element={<EditPost />} />
       </Routes>
     </Router>

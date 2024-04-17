@@ -119,7 +119,7 @@ const Home = () => {
                                 <h2 className="post-title">{post.title}</h2>
                                 <p className="post-content">{post.content}</p>
                                 <div className="tags">
-                                    Tags: {post.tags.map((tag, index) => (
+                                    Tags: {post.tags && post.tags.map((tag, index) => (
                                         <span key={index} className="tag">{tag}</span>
                                     ))}
                                 </div>
@@ -127,7 +127,7 @@ const Home = () => {
                                 <p className="publication-date">Posted by: {users.find(user => user.id === post.author_id)?.name}</p>
                                 <div className="buttons">
                                     <p>
-                                        <Link to="/">
+                                        <Link to={`/blog/${post.id}`}>
                                             <Button variant="dark">View more</Button>{' '}
                                         </Link>
                                     </p>

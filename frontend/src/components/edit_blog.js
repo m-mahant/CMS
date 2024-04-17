@@ -13,9 +13,11 @@ const EditPost = () => {
         publication_date: '',
         tags: [],
         author_id: '',
+        images: []
     });
     const [images, setImages] = useState([]);
     const [selectedImages, setSelectedImages] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
     const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
@@ -33,7 +35,8 @@ const EditPost = () => {
                     tags: postData.tags,
                     author_id: postData.author_id,
                 });
-                setImages(postData.images);
+                const imagesArray = postData.images.split('|');
+                setImages(imagesArray);
                 setLoading(false);
             } catch (error) {
                 setError('Failed to fetch post data. Please try again later.');
@@ -56,6 +59,11 @@ const EditPost = () => {
 
     const handleImageChange = e => {
         setSelectedImages([...e.target.files]);
+        const previews = [];
+        for (let i = 0; i < e.target.files.length; i++) {
+            previews.push(URL.createObjectURL(e.target.files[i]));
+        }
+        setImagePreviews(previews);
     };
 
     const handleSubmit = async e => {
@@ -67,25 +75,48 @@ const EditPost = () => {
         formDataWithImages.append('title', formData.title);
         formDataWithImages.append('content', formData.content);
         formDataWithImages.append('publication_date', formData.publication_date);
-        formDataWithImages.append('tags', formData.tags.join(','));
         formDataWithImages.append('author_id', formData.author_id);
-
-        selectedImages.forEach(image => {
-            formDataWithImages.append('images', image);
+        formData.tags.forEach(tag => {
+            formDataWithImages.append('tags[]', tag);
         });
 
+        if (selectedImages.length > 0) {
+            selectedImages.forEach((image, index) => {
+                formDataWithImages.append(`images[${index}]`, image);
+            });
+        }
+
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/update-blog/${id}`, formDataWithImages, {
+            const response = await axios.post(`http://127.0.0.1:8000/api/update-blog/${id}`, formDataWithImages, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+
             setSuccessMessage(response.data.message);
             navigate("/");
         } catch (error) {
             setError('Failed to update blog. Please try again later.');
         }
     };
+
+    const existingImages = images.map((image, index) => (
+        <img key={index} src={`http://127.0.0.1:8000/images/${image}`} alt="Existing" className="existing-image" style={{ width: '100px', height: '100px', gap: '10px' }} />
+    ));
+
+    const newImageInput = (
+        <Form.Group controlId="formBasicNewImages">
+            <Form.Label>Upload New Images</Form.Label>
+            <Form.Control type="file" multiple onChange={handleImageChange} />
+        </Form.Group>
+    );
+
+    const imagePreviewElements = imagePreviews.map((preview, index) => (
+        <img key={index} src={preview} alt="Preview" className="image-preview" style={{ width: '100px', height: '100px', gap: '10px' }} />
+    ));
+
+    const message = successMessage ? <div className="success-message">{successMessage}</div> : null;
+    const errorMessage = error ? <div className="error-message">{error}</div> : null;
 
     if (loading) {
         return <div>Loading...</div>;
@@ -116,38 +147,26 @@ const EditPost = () => {
                         type="text"
                         placeholder="Enter tags (comma separated)"
                         name="tags"
-                        value={Array.isArray(formData.tags) ? formData.tags.join(', ') : formData.tags}
+                        value={formData.tags.join(', ')}
                         onChange={handleChange}
                     />
                 </Form.Group>
-
-                <Form.Group controlId="formBasicImages">
-                    <Form.Label>Existing Images</Form.Label>
-                    <div className="existing-images-container">
-                        {images.map((image, index) => (
-                            <img
-                                key={index}
-                                src={`http://127.0.0.1:8000/images/${image}`}
-                                alt={`Image ${index}`}
-                                className="existing-image"
-                                style={{ width: '200px', height: '150px' }}
-                            />
-                        ))}
-                    </div>
-                </Form.Group>
-
-                <Form.Group controlId="formBasicNewImages">
-                    <Form.Label>New Images</Form.Label>
-                    <Form.Control type="file" name="images" accept="image/*" multiple onChange={handleImageChange} />
-                </Form.Group>
-
-                <br />
-                <Button variant="dark" type="submit">
+                <br /><br />
+                <div className="existing-images-container">
+                    {existingImages}
+                </div>
+                {newImageInput}
+                <br /><br />
+                <div className="image-preview-container">
+                    {imagePreviewElements}
+                </div>
+                <br /><br />
+                <Button variant="primary" type="submit">
                     Update Blog
                 </Button>
-                <br /><br /><br /><br />
-                {error && <div className="error">{error}</div>}
-                {successMessage && <div className="success">{successMessage}</div>}
+                {message}
+                {errorMessage}
+
             </Form>
         </div>
     );

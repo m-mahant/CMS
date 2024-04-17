@@ -11,19 +11,32 @@ const Login = () => {
         password: '',
     });
     const [error, setError] = useState(null);
-    const [successMessage, setSuccessMessage] = useState('');
+    const [validationErrors, setValidationErrors] = useState({
+        email: '',
+        password: '',
+    });
 
     let navigate = useNavigate();
 
     const handleChange = e => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        setValidationErrors({ ...validationErrors, [name]: '' });
     };
 
     const handleSubmit = async e => {
         e.preventDefault();
         setError(null);
-        setSuccessMessage('');
+
+        if (!formData.email) {
+            setValidationErrors({ ...validationErrors, email: 'Please enter your email.' });
+            return;
+        }
+
+        if (!formData.password) {
+            setValidationErrors({ ...validationErrors, password: 'Please enter your password.' });
+            return;
+        }
 
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/login', formData);
@@ -32,7 +45,6 @@ const Login = () => {
             localStorage.setItem('user_id', user_id);
             localStorage.setItem('user', JSON.stringify(name));
             console.log('Login successful:', response.data);
-            setSuccessMessage(response.data.message);
             navigate("/");
         } catch (error) {
             setError(error.response.data.message);
@@ -46,11 +58,13 @@ const Login = () => {
                 <Form.Group controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control type="email" placeholder="Enter email" name="email" value={formData.email} onChange={handleChange} />
+                    <Form.Text className="text-danger">{validationErrors.email}</Form.Text>
                 </Form.Group>
-
+                <br />
                 <Form.Group controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
                     <Form.Control type="password" placeholder="Password" name="password" value={formData.password} onChange={handleChange} />
+                    <Form.Text className="text-danger">{validationErrors.password}</Form.Text>
                 </Form.Group>
                 <br></br>
                 <center>
@@ -61,7 +75,6 @@ const Login = () => {
                 <br></br>
                 <center>
                     {error && <div className="error">{error}</div>}
-                    {successMessage && <div className="success">{successMessage}</div>}
                 </center>
                 <p>Don't have an account? <Link to="/register">Register</Link></p>
             </Form>
