@@ -1,0 +1,67 @@
+.navbar {
+    background-color: #363636;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left {
+    flex: 0;
+}
+
+.navbar-middle {
+    flex: 0;
+    padding-left: 30px;
+    text-align: left;
+}
+
+.navbar-right {
+    flex: 1;
+    text-align: right;
+}
+
+.navbar-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar-item {
+    margin-right: 20px;
+}
+
+.navbar-logo{
+    font-size: 30px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.navbar-button,
+.navbar-link {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+    }
+
+    .navbar-middle {
+        margin-top: 20px;
+    }
+}
+
+.navbar-username {
+    color: #ffffff;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 16px;
+}
