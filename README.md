@@ -1,7 +1,3 @@
-Certainly! Here's a refined version of your README.md content with some enhancements for clarity and style:
-
----
-
 # Content Management System (CMS) - Simple Blogging Web Application
 
 Welcome to our Content Management System project! This web application integrates React for the frontend and Laravel for the backend, providing a platform for managing and publishing blog posts.
