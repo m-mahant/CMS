@@ -41,7 +41,7 @@ Follow these steps to set up and run the project on your local machine:
    - Navigate to the `backend` directory.
    - Install dependencies using `composer install`.
    - Set up your environment variables in `.env` file.
-   - Run migrations and seeders using `php artisan migrate --seed`.
+   - Run migrations using `php artisan migrate`.
    - Start the Laravel server: `php artisan serve`.
 
 3. **Frontend Setup:**
