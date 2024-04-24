@@ -34,7 +34,7 @@ Follow these steps to set up and run the project on your local machine:
 
 1. **Clone the Repository:**
    ```
-   git clone [repository_url]
+   git clone https://github.com/mansimahant/CMS.git
    ```
 
 2. **Backend Setup:**
